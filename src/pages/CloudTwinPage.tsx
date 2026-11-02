@@ -1,35 +1,34 @@
-import { Activity, AlertTriangle, Cloud, Gauge, ShieldCheck } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { cloudTwinNodes } from '@/data/navigation'
+import { Cloud, RotateCcw } from 'lucide-react'
+import { ComponentInspector } from '@/components/cloud-twin/ComponentInspector'
+import { IncidentPanel } from '@/components/cloud-twin/IncidentPanel'
+import { MonitoringView } from '@/components/cloud-twin/MonitoringView'
+import { SimulationNotice } from '@/components/cloud-twin/SimulationNotice'
+import { TopologyView } from '@/components/cloud-twin/TopologyView'
+import { ViewToggle } from '@/components/cloud-twin/ViewToggle'
 import { Panel } from '@/components/ui/Panel'
-import { SectionHeading } from '@/components/ui/SectionHeading'
 import { StatusBadge } from '@/components/ui/StatusBadge'
+import { infrastructureComponents } from '@/data/cloud-twin/infrastructure'
+import { incidentScenarios } from '@/data/cloud-twin/incidents'
+import { useCloudTwinSimulation } from '@/hooks/useCloudTwinSimulation'
 
 export function CloudTwinPage() {
+  const simulation = useCloudTwinSimulation()
   return (
-    <motion.div className="page-stack" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-      <SectionHeading eyebrow="05 / SIGNATURE SURFACE" title="CLOUD TWIN" description="A simulated infrastructure monitoring and incident investigation environment." action={<StatusBadge tone="warning">SIMULATION ONLY</StatusBadge>} />
-      <div className="notice-banner"><AlertTriangle size={17} /><span>This environment is a local product simulation. It is not connected to AWS or any live cloud infrastructure.</span></div>
-      <div className="metric-grid">
-        <Metric icon={Activity} label="Service health" value="NOMINAL" />
-        <Metric icon={Gauge} label="Request flow" value="STANDBY" />
-        <Metric icon={ShieldCheck} label="Incident queue" value="CLEAR" />
+    <motion.div className="page-stack cloud-twin-page" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .35 }}>
+      <div className="cloud-twin-header">
+        <div><p className="section-heading__eyebrow">05 / SIGNATURE SURFACE</p><h1><Cloud size={34} /> CLOUD TWIN</h1><p>Interactive infrastructure monitoring and incident investigation environment.</p></div>
+        <div className="cloud-twin-header__actions"><StatusBadge tone="warning">SIMULATION MODE</StatusBadge><button type="button" className="button button--quiet" onClick={simulation.reset}><RotateCcw size={14} /> Reset simulation</button></div>
       </div>
-      <div className="content-grid content-grid--two">
-        <Panel label="TOPOLOGY / SIMULATED" title="Service map">
-          <div className="cloud-map">
-            <div className="cloud-map__hub"><Cloud size={21} /><span>SIMULATED CLOUD</span></div>
-            {cloudTwinNodes.map((node) => <div className="cloud-node" key={node.label}><span className="cloud-node__line" /><div><strong>{node.label}</strong><small>{node.detail}</small></div><StatusBadge tone="success" pulse>{node.state}</StatusBadge></div>)}
-          </div>
+      <SimulationNotice />
+      <div className="cloud-twin-toolbar"><ViewToggle view={simulation.view} onChange={simulation.setView} /><span className="cloud-twin-toolbar__state">LOCAL STATE / DETERMINISTIC DATASET</span></div>
+      {simulation.view === 'topology' ? (
+        <Panel label="INFRASTRUCTURE TOPOLOGY" title="Select a resource to inspect">
+          <TopologyView components={infrastructureComponents} selectedComponentId={simulation.selectedComponentId} getStatus={simulation.getStatus} onSelect={simulation.selectComponent} />
         </Panel>
-        <Panel label="INVESTIGATION LOG" title="No active incidents">
-          <div className="empty-state"><ShieldCheck size={26} /><strong>All simulated systems nominal</strong><span>Incident timelines and traces will appear here during an active scenario.</span></div>
-        </Panel>
-      </div>
+      ) : <MonitoringView />}
+      <ComponentInspector component={simulation.selectedComponent} status={simulation.getStatus(simulation.selectedComponent.id)} remediationExecuted={simulation.remediationExecuted} onResetStatus={simulation.reset} />
+      <IncidentPanel incidents={incidentScenarios} selectedIncident={simulation.selectedIncident} selectedIncidentId={simulation.selectedIncidentId} revealedEvidence={simulation.revealedEvidence} remediationExecuted={simulation.remediationExecuted} affectedStatus={simulation.getStatus(simulation.selectedIncident.affectedComponentId)} onSelect={simulation.selectIncident} onReveal={simulation.revealEvidence} onRemediate={simulation.executeRemediation} onReset={simulation.reset} />
     </motion.div>
   )
-}
-
-function Metric({ icon: Icon, label, value }: { icon: typeof Activity; label: string; value: string }) {
-  return <article className="metric-card metric-card--cyan"><div className="metric-card__topline"><span className="metric-card__label">{label}</span><Icon size={16} /></div><strong className="metric-card__value">{value}</strong><span className="metric-card__detail">Local simulation state</span></article>
 }
