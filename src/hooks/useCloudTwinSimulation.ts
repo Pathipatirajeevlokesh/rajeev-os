@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react'
 import { infrastructureComponents } from '@/data/cloud-twin/infrastructure'
 import { incidentScenarios } from '@/data/cloud-twin/incidents'
+import {
+  incidentStatus,
+  nextEvidenceCount,
+  remediationStatus,
+} from '@/data/cloud-twin/simulation'
 import type { CloudTwinView, InfrastructureStatus } from '@/types/cloud-twin'
-
-const incidentStatus: Record<string, InfrastructureStatus> = {
-  'inc-cpu-001': 'warning',
-  'inc-rds-001': 'critical',
-  'inc-errors-001': 'warning',
-}
 
 export function useCloudTwinSimulation() {
   const [view, setView] = useState<CloudTwinView>('topology')
@@ -39,11 +38,14 @@ export function useCloudTwinSimulation() {
   }
 
   const revealEvidence = () => {
-    setRevealedEvidence((current) => Math.min(current + 1, selectedIncident.investigationSteps.length))
+    setRevealedEvidence((current) => nextEvidenceCount(current, selectedIncident.investigationSteps.length))
   }
 
   const executeRemediation = () => {
-    setStatusOverrides((current) => ({ ...current, [selectedIncident.affectedComponentId]: 'healthy' }))
+    setStatusOverrides((current) => ({
+      ...current,
+      [selectedIncident.affectedComponentId]: remediationStatus(),
+    }))
     setRemediationExecuted(true)
     setRevealedEvidence(selectedIncident.investigationSteps.length)
   }

@@ -5,13 +5,12 @@ import { SectionHeading } from '@/components/ui/SectionHeading'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { SkillCategory } from '@/components/skills/SkillCategory'
 import { SkillFilter } from '@/components/skills/SkillFilter'
+import { filterSkillCategories } from '@/lib/catalog'
 
 export function SkillsPage() {
   const [activeCategory, setActiveCategory] = useState('all')
   const visibleCategories = useMemo(
-    () => activeCategory === 'all'
-      ? skillCategories
-      : skillCategories.filter((category) => category.id === activeCategory),
+    () => filterSkillCategories(skillCategories, activeCategory),
     [activeCategory],
   )
 

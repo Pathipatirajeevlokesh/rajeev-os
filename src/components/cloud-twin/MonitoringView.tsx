@@ -38,7 +38,11 @@ function MetricChart({ dataKey, color, name, unit }: { dataKey: 'cpu' | 'memory'
         <LineChart data={monitoringMetrics}>
           <XAxis dataKey="time" tick={{ fill: '#506271', fontSize: 9 }} axisLine={false} tickLine={false} />
           <YAxis hide domain={['auto', 'auto']} />
-          <Tooltip contentStyle={{ background: '#101923', border: '1px solid #2a4052', fontSize: 10 }} labelStyle={{ color: '#8293a3' }} formatter={(value) => [`${value}${unit}`, name]} />
+          <Tooltip
+            contentStyle={{ background: 'var(--surface-raised)', border: '1px solid var(--border-bright)', fontSize: 10 }}
+            labelStyle={{ color: 'var(--text-muted)' }}
+            formatter={(value) => [`${value}${unit}`, name]}
+          />
           <Line type="monotone" dataKey={dataKey} stroke={color} strokeWidth={2} dot={false} />
         </LineChart>
       </ResponsiveContainer>

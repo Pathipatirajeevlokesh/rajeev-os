@@ -1,5 +1,4 @@
 import { Bot, CloudCog, Code2, Workflow } from 'lucide-react'
-import { Panel } from '@/components/ui/Panel'
 
 const focusAreas = [
   { title: 'Cloud Infrastructure', description: 'Designing clear service boundaries and operational interfaces.', technologies: ['Cloud systems', 'Observability'], icon: CloudCog },
@@ -15,14 +14,17 @@ export function EngineeringFocus() {
         <p className="panel__label">ENGINEERING FOCUS</p>
         <h2 id="engineering-focus-title" className="dashboard-section__title">Where the signal is strongest</h2>
       </div>
-      <div className="focus-grid">
-        {focusAreas.map(({ title, description, technologies, icon: Icon }) => (
-          <Panel className="focus-card" key={title}>
+      <div className="command-focus-list">
+        {focusAreas.map(({ title, description, technologies, icon: Icon }, index) => (
+          <article className="command-focus-item" key={title}>
+            <span className="command-focus-item__number">0{index + 1}</span>
             <Icon className="focus-card__icon" size={20} strokeWidth={1.6} />
-            <h3>{title}</h3>
-            <p>{description}</p>
-            <div className="tag-list">{technologies.map((technology) => <span key={technology}>{technology}</span>)}</div>
-          </Panel>
+            <div>
+              <h3>{title}</h3>
+              <p>{description}</p>
+              <div className="tag-list">{technologies.map((technology) => <span key={technology}>{technology}</span>)}</div>
+            </div>
+          </article>
         ))}
       </div>
     </section>

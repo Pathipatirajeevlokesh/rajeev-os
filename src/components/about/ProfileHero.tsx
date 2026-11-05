@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { BriefcaseBusiness, MapPin, Sparkles } from 'lucide-react'
 import { StatusBadge } from '@/components/ui/StatusBadge'
+import profilePortrait from '@/assets/rajeev-profile.png'
 
 export function ProfileHero() {
   return (
@@ -10,13 +11,16 @@ export function ProfileHero() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
     >
-      <div>
+      <div className="profile-hero__copy">
         <p className="section-heading__eyebrow">ENGINEER PROFILE / ABOUT</p>
         <h1>Curiosity drives the systems I build.</h1>
         <p className="profile-hero__intro">
           I&apos;m Rajeev Lokesh, an engineer interested in cloud infrastructure, intelligent
           software, AI systems and automation.
         </p>
+      </div>
+      <div className="profile-hero__portrait">
+        <img src={profilePortrait} alt="Rajeev Lokesh in a professional black-and-white portrait" />
       </div>
       <div className="profile-hero__signal">
         <div className="profile-hero__signal-top">

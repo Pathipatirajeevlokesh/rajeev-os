@@ -5,6 +5,7 @@ import { ProjectDetail } from '@/components/projects/ProjectDetail'
 import { ProjectFilters } from '@/components/projects/ProjectFilters'
 import { ProjectGrid } from '@/components/projects/ProjectGrid'
 import { projects, type ProjectFilter } from '@/data/projects'
+import { filterProjects } from '@/lib/catalog'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 
@@ -16,16 +17,7 @@ export function ProjectVaultPage() {
   const project = projectId ? projects.find((item) => item.id === projectId) : undefined
 
   const filteredProjects = useMemo(() => {
-    const query = searchTerm.trim().toLowerCase()
-    return projects.filter((item) => {
-      const matchesFilter = activeFilter === 'all' || item.filters.includes(activeFilter)
-      const matchesSearch = !query
-        || [item.name, item.category, item.description, ...item.technologies]
-          .join(' ')
-          .toLowerCase()
-          .includes(query)
-      return matchesFilter && matchesSearch
-    })
+    return filterProjects(projects, activeFilter, searchTerm)
   }, [activeFilter, searchTerm])
 
   if (projectId) {

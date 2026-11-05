@@ -1,2 +1,5 @@
 @import "tailwindcss";
 @import "./App.css";
+
+html { color-scheme: dark; }
+html[data-theme="light"] { color-scheme: light; }
